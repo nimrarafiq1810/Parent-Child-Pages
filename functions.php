@@ -19,22 +19,17 @@ add_filter( 'locale_stylesheet_uri', 'chld_thm_cfg_locale_css' );
 function enqueue_scripts() {
 
     wp_enqueue_script('form-control-script', get_stylesheet_directory_uri() . '/influencers_search_tool/assets/js/form-control.js', array('jquery'), null, true);
-    wp_enqueue_script('search-script', get_stylesheet_directory_uri() . '/influencers_search_tool/assets/js/search.js', array('jquery'), null, true);
+    wp_enqueue_script('search-script', get_stylesheet_directory_uri() . '/influencers_search_tool/assets/js/search.js', array('jquery', 'select2'), null, true);
   
     wp_localize_script('form-control-script', 'localized_data', array(
       'not_found_icon' => get_stylesheet_directory_uri() . "/influencers_search_tool/assets/images/notFound.svg", // WordPress AJAX URL
     ));
+
+    // wp_enqueue_script('jquerymin', 'https://code.jquery.com/jquery-3.6.0.min.js', array(), '3.6.0', true);
+    wp_enqueue_script('select2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js', array(), '4.0.13', true);
+
   
 }
 add_action('wp_enqueue_scripts', 'enqueue_scripts');
 
 include(get_stylesheet_directory() . "/influencers_search_tool/shortcode.php");
-
-
-function influencers_render_function() {
-    // Your PHP logic here
-    die();
-}
-
-add_action('wp_ajax_custom_action', 'influencers_render_function'); // For logged-in users
-add_action('wp_ajax_nopriv_custom_action', 'influencers_render_function'); // For non-logged-in users
