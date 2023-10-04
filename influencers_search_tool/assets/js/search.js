@@ -4,14 +4,53 @@ jQuery(document).ready(function ($) {
     const endpoint = "http://localhost:3000/influencers";
     
     const search_form = $("#influencers_search_form");
+    const show_result_div = $('#show_result_div');
+
     const influencers_card_grid = $('#influencers_card_grid');
     const blur_result_section = $('#blur_result_section');
 
-    search_form.on('submit', (e) => {
-        e.preventDefault();
+    const clear_followers_range_button = $('#clear_followers_range_button');
+    const clear_country_button = $('#clear_country_button');
 
+    const loading_card = `<!-- Card Item Loader -->
+    <div class="IG-tool-profile-card loader-card">
+        <div class="IG-tool-profile-head">
+            <i class="animation-loader"></i>
+            <h6 class="animation-loader title"></h6>
+            <small class="animation-loader title"></small>
+        </div>
+        <div class="IG-tool-profile-body">
+            <ul>
+                <li class="animation-loader"></li>
+                <li class="animation-loader"></li>
+                <li class="animation-loader"></li>
+            </ul>
+            <ol>
+                <li class="animation-loader"></li>
+                <li class="animation-loader"></li>
+                <li class="animation-loader"></li>
+                <li class="animation-loader"></li>
+            </ol>
+        </div>
+        <div class="IG-tool-profile-foot">
+            <ul>
+                <li class="animation-loader"></li>
+                <li class="animation-loader"></li>
+                <li class="animation-loader"></li>
+                <li class="animation-loader"></li>
+                <li class="animation-loader"></li>
+                <li class="animation-loader"></li>
+                <li class="animation-loader"></li>
+                <li class="animation-loader"></li>
+                <li class="animation-loader"></li>
+            </ul>
+        </div>
+    </div>`;
+
+    const getInfluencers = (e) => {
         influencers_card_grid.html("");
         blur_result_section.html("");
+        show_result_div.html("");
         
         // getting form values and making an object
         const form = e.currentTarget;
@@ -24,6 +63,11 @@ jQuery(document).ready(function ($) {
 
         form_values.keywords = entered_keywords;
         
+        // adding loading cards
+        for (let index = 0; index < 3; index++) {
+            influencers_card_grid.append(loading_card);
+        }
+
         fetch(endpoint, {
             method: 'POST',
             headers: {
@@ -39,9 +83,11 @@ jQuery(document).ready(function ($) {
         })
         .then((res_data) => {
             const card_colors = ["", "blue-card", "yellow-card", "green-card"];
-            $('#show_result_div').html(`<h5>Showing ${res_data.count>=6 ? "6" : res_data.count} of ${res_data.count} profiles. To see all results (with even more data), <a href="">start a free trial.</a></h5>`);
+            show_result_div.html(`<h5>Showing ${res_data.count>=6 ? "6" : res_data.count} of ${res_data.count} profiles. To see all results (with even more data), <a href="">start a free trial.</a></h5>`);
 
             const index_end = (res_data.count >= 6) ? 6 : res_data.count;
+            
+            influencers_card_grid.html(""); // clearing the loading cards
             
             if(res_data.count > 0){
                 for (let index = 0; index < index_end; index++) {
@@ -138,8 +184,25 @@ jQuery(document).ready(function ($) {
         .catch((error) => {
             console.error('Fetch error:', error);
         });
+    }
 
-    })
+    search_form.on('submit', (e) => {
+        e.preventDefault();
+        getInfluencers(e);
+    });
+
+    clear_followers_range_button.on('click', () => {
+        $('#followers_to').val("").trigger("change");
+        $('#followers_from').val("").trigger("change");
+        // search_form.submit();
+    });
+
+    clear_country_button.on('click', () => {
+        $('#location').val("").trigger("change"); // if you are using the Select2 library for styling, you should trigger the "change"
+        // search_form.submit();
+    });
+
+
 
 });
 

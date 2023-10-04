@@ -555,3 +555,68 @@
         line-height: normal;
     }
 }
+
+
+.form-field-set .form-field .label-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 10px;
+}
+.form-field-set .form-field .label-wrap button {
+    padding: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    font-size: 12px;
+    line-height: normal;
+}
+.form-field-set .form-field .inner .label-wrap {
+    padding: 0;
+}
+.form-field-set .form-field .label-wrap button:hover {
+    color: #F0C933;
+    text-decoration: underline;
+}
+.form-field-set.align-right {
+    padding-right: 10px;
+}
+/* Loader Css */
+.loader-card .animation-loader.title {
+    height: 20px;
+    width: 120px;
+    border-radius: 5px;
+    margin: 15px 0 8px 0 !important;
+}
+.loader-card small.animation-loader.title {
+    height: 10px;
+    width: 160px;
+    margin: 0 !important;
+}
+.IG-tool-profile-cards .loader-card.IG-tool-profile-card .IG-tool-profile-body ul li {
+    height: 24px;
+    width: 100%;
+    border-radius: 5px;
+}
+.IG-tool-profile-cards .loader-card.IG-tool-profile-card .IG-tool-profile-body ol li.animation-loader {
+    height: 63px;
+}
+.IG-tool-profile-cards .loader-card.IG-tool-profile-card .IG-tool-profile-foot ul li {
+    width: 125px;
+    height: 29px;
+    margin-right: 5px;
+}
+.loader-card .animation-loader,
+.IG-tool-profile-cards .loader-card.IG-tool-profile-card .IG-tool-profile-head:before,
+.IG-tool-profile-cards .loader-card.IG-tool-profile-card .IG-tool-profile-body ol li.animation-loader,
+.IG-tool-profile-cards .loader-card.IG-tool-profile-card .IG-tool-profile-foot ul li {
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  background-size: 200% 100%;
+  animation: 1s shine linear infinite;
+  box-shadow: none !important;
+}
+@keyframes shine {
+    to {
+      background-position-x: -200%;
+    }
+}

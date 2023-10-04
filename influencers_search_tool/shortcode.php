@@ -14,7 +14,11 @@ function influencers_search_tool_render(){
                     <div class="form-field-set">
                         <div class="form-field">
                             <div class="inner">
-                            <label>Influencer Location <i> <img src="<?php echo $assets_dir . "images/Helpicon.svg";?>" alt=""> </i> </label>
+                            
+                            <div class="label-wrap">
+                                <label>Influencer Location <i> <img src="<?php echo $assets_dir . "images/Helpicon.svg";?>" alt=""> </i> </label>        
+                                <button id="clear_country_button" type="button">Clear</button>
+                            </div>
                             <!-- Add "select2" class to the select element to initialize Select2 -->
                                 <select id="location" name="location" class="select2 hidden">
                                     <option value="" selected disabled>Select Country</option>
@@ -22,7 +26,9 @@ function influencers_search_tool_render(){
                                 <div class="selected-countries" id="locations_list"></div>
                             </div>
                             <div class="inner">
-                                <label>Bio Keyword <i> <img src="<?php echo $assets_dir . "images/Helpicon.svg";?>" alt=""> </i> </label>
+                                <div class="label-wrap">
+                                    <label>Bio Keyword <i> <img src="<?php echo $assets_dir . "images/Helpicon.svg";?>" alt=""> </i> </label>
+                                </div>
                                     <div class="add-keywords-field">
                                         <input type="text" id="keywords" name="keywords" placeholder="Type keyword here and press enter..." onkeydown="handleKeyPress(event)">
                                         <ul id="bio_keywords_list"></ul>
@@ -31,7 +37,11 @@ function influencers_search_tool_render(){
                         </div>
 
                         <div class="form-field">
-                            <label>Influencer Followers <i> <img src="<?php echo $assets_dir . "images/Helpicon.svg";?>" alt=""> </i></label>
+                            
+                            <div class="label-wrap">
+                                    <label>Influencer Followers <i> <img src="<?php echo $assets_dir . "images/Helpicon.svg";?>" alt=""> </i></label>        
+                                    <button id="clear_followers_range_button" type="button">Clear</button>
+                            </div>
                             <div class="form-field-nested">
                                 <select id="followers_from" name="followers_from" class="select2 hidden">
                                     <option value="" selected disabled>Min</option>
