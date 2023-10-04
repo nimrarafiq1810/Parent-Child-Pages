@@ -13,42 +13,46 @@ function influencers_search_tool_render(){
                     <h4>Search 71M+ Instagram profiles by location</h4>
                     <div class="form-field-set">
                         <div class="form-field">
+                            <div class="inner">
                             <label>Influencer Location <i> <img src="<?php echo $assets_dir . "images/Helpicon.svg";?>" alt=""> </i> </label>
                             <!-- Add "select2" class to the select element to initialize Select2 -->
-                                <select id="influencers_location" name="influencers_location" class="select2 hidden">
+                                <select id="location" name="location" class="select2 hidden">
                                     <option value="" selected disabled>Select Country</option>
                                 </select>
-                                <div class="selected-countries" id="influencers_locations_list"></div>
-                        </div>
-                        <div class="form-field">
-                            <label>Bio Keyword <i> <img src="<?php echo $assets_dir . "images/Helpicon.svg";?>" alt=""> </i> </label>
-                            <div class="add-keywords-field">
-                                <input type="text" id="bio_keywords_input" name="bio_keywords_input" placeholder="Type keyword here" onkeydown="handleKeyPress(event)">
-                                <ul id="bio_keywords_list"></ul>
+                                <div class="selected-countries" id="locations_list"></div>
+                            </div>
+                            <div class="inner">
+                                <label>Bio Keyword <i> <img src="<?php echo $assets_dir . "images/Helpicon.svg";?>" alt=""> </i> </label>
+                                    <div class="add-keywords-field">
+                                        <input type="text" id="keywords" name="keywords" placeholder="Type keyword here and press enter..." onkeydown="handleKeyPress(event)">
+                                        <ul id="bio_keywords_list"></ul>
+                                    </div>
                             </div>
                         </div>
 
                         <div class="form-field">
                             <label>Influencer Followers <i> <img src="<?php echo $assets_dir . "images/Helpicon.svg";?>" alt=""> </i></label>
                             <div class="form-field-nested">
-                                <select id="min_followers_qty" name="min_followers_qty" class="select2 hidden">
+                                <select id="followers_from" name="followers_from" class="select2 hidden">
                                     <option value="" selected disabled>Min</option>
                                 </select>
-                                <div class="selected-countries" id="min_followers_qty_div"></div>
+                                <div class="selected-countries" id="followers_from_div"></div>
                                 
-                                <select id="max_followers_qty" name="max_followers_qty" class="select2 hidden">
+                                <select id="followers_to" name="followers_to" class="select2 hidden">
                                     <option value="" selected disabled>Max</option>
                                 </select>
-                                <div class="selected-countries" id="max_followers_qty_div"></div>
+                                <div class="selected-countries" id="followers_to_div"></div>
                             </div>
+
+                            <div class="form-field-set align-right">
+                        <button class="IG-tool-submit" type="submit">Search Influencers (6)</button>
+                    </div>
                         </div>
                         
                     </div>
 
 
-                    <div class="form-field-set align-right">
-                        <button class="IG-tool-submit" type="submit">Search Influencers (6)</button>
-                    </div>
+                    
                 </form>
             </div>
         </div>

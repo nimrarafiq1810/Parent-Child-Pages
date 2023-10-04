@@ -22,7 +22,7 @@ jQuery(document).ready(function ($) {
             form_values[key] = value;
         });
 
-        form_values.bio_keywords_input = entered_keywords;
+        form_values.keywords = entered_keywords;
         
         fetch(endpoint, {
             method: 'POST',
@@ -39,7 +39,7 @@ jQuery(document).ready(function ($) {
         })
         .then((res_data) => {
             const card_colors = ["", "blue-card", "yellow-card", "green-card"];
-            $('#show_result_div').html(`<h5>Showing ${res_data.count>=6 ? "6" : res_data.count} of ${res_data.count} profiles. To see all results (with even more data), start a free trial.</h5>`);
+            $('#show_result_div').html(`<h5>Showing ${res_data.count>=6 ? "6" : res_data.count} of ${res_data.count} profiles. To see all results (with even more data), <a href="">start a free trial.</a></h5>`);
 
             const index_end = (res_data.count >= 6) ? 6 : res_data.count;
             
