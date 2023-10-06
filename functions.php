@@ -20,9 +20,13 @@ function enqueue_scripts() {
 
     wp_enqueue_script('form-control-script', get_stylesheet_directory_uri() . '/influencers_search_tool/assets/js/form-control.js', array('jquery', 'select2'), null, true);
     wp_enqueue_script('search-script', get_stylesheet_directory_uri() . '/influencers_search_tool/assets/js/search.js', array('jquery', 'select2'), null, true);
+    wp_enqueue_script('aux-script', get_stylesheet_directory_uri() . '/influencers_search_tool/assets/js/auxiliary.js', array('jquery', 'select2'), null, true);
   
     wp_localize_script('form-control-script', 'localized_data', array(
-      'not_found_icon' => get_stylesheet_directory_uri() . "/influencers_search_tool/assets/images/notFound.svg", // WordPress AJAX URL
+      'not_found_icon' => get_stylesheet_directory_uri() . "/influencers_search_tool/assets/images/notFound.svg",
+    ));
+    wp_localize_script('search-script', 'localized_data', array(
+      'endpoint' => 'https://nlbi48z0sl.execute-api.us-east-1.amazonaws.com/live/search/'
     ));
 
     wp_enqueue_style('select2-css', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css', array(), '4.0.13');

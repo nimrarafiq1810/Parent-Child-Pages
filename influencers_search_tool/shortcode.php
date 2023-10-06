@@ -30,7 +30,7 @@ function influencers_search_tool_render(){
                                     <label>Bio Keyword <i> <img src="<?php echo $assets_dir . "images/Helpicon.svg";?>" alt=""> </i> </label>
                                 </div>
                                     <div class="add-keywords-field">
-                                        <input type="text" id="keywords" name="keywords" placeholder="Type keyword here and press enter..." onkeydown="handleKeyPress(event)">
+                                        <input type="text" id="bio" name="bio" placeholder="Type keyword here and press enter..." onkeydown="handleKeyPress(event)">
                                         <ul id="bio_keywords_list"></ul>
                                     </div>
                             </div>
@@ -43,19 +43,19 @@ function influencers_search_tool_render(){
                                     <button id="clear_followers_range_button" type="button">Clear</button>
                             </div>
                             <div class="form-field-nested">
-                                <select id="followers_from" name="followers_from" class="select2 hidden">
+                                <select id="from_followers" name="from_followers" class="select2 hidden">
                                     <option value="" selected disabled>Min</option>
                                 </select>
-                                <div class="selected-countries" id="followers_from_div"></div>
+                                <div class="selected-countries" id="from_followers_div"></div>
                                 
-                                <select id="followers_to" name="followers_to" class="select2 hidden">
+                                <select id="to_followers" name="to_followers" class="select2 hidden">
                                     <option value="" selected disabled>Max</option>
                                 </select>
-                                <div class="selected-countries" id="followers_to_div"></div>
+                                <div class="selected-countries" id="to_followers_div"></div>
                             </div>
 
                             <div class="form-field-set align-right">
-                        <button class="IG-tool-submit" type="submit">Search Influencers (6)</button>
+                        <button id="influencers_search_btn" class="IG-tool-submit" type="submit">Search Influencers</button>
                     </div>
                         </div>
                         

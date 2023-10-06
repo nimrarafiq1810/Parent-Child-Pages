@@ -31,7 +31,7 @@ const handleKeyPress = (e) => {
 }
 
 const addToInputList = () => {
-    const keywords_input_field = $('#keywords')
+    const keywords_input_field = $('#bio')
     const keywords_input_field_value = keywords_input_field.val().trim();
     
     if (keywords_input_field_value !== '') {
@@ -65,8 +65,8 @@ const removeFromInputList = (item) => {
 // ====================================================================================================================
 // handeling min and max range filter
 
-const range_min_dropdown = $('#followers_from');
-const range_max_dropdown = $('#followers_to');
+const range_min_dropdown = $('#from_followers');
+const range_max_dropdown = $('#to_followers');
 
 const min_val = 5000; const max_val = 200000; const step_size = 10000;
 const followers_range = Array.from({ length: (max_val - min_val) / 5000 + 1 }, (_, index) => {
