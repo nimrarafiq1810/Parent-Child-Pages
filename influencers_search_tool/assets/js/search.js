@@ -183,6 +183,8 @@ jQuery(document).ready(function ($) {
 
         if(available_free_searches > 0){
             getInfluencers(e);
+        } else {
+            show_result_div.html(`<h5>You are out of your free searches. <a href="">Start a free trial now.</a></h5>`);
         }
 
     });
