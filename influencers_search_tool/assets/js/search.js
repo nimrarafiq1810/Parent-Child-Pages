@@ -17,7 +17,6 @@ jQuery(document).ready(function ($) {
     if(free_searches === null){ // when a user is searching for the first time in a day
         setCookie('ic_free_searches', 5, 1);
         free_searches = getCookie('ic_free_searches');
-        console.log(free_searches)
     }
     let available_free_searches = free_searches;
 
