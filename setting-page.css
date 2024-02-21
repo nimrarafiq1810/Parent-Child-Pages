@@ -1,0 +1,58 @@
+#settings-table {
+  border-collapse: collapse;
+  width: 100%;
+  background-color: white;
+}
+
+#settings-table th,
+#settings-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+#settings-table th {
+  background-color: #f2f2f2;
+}
+
+#settings-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#settings-table tr:hover {
+  background-color: #ddd;
+}
+
+.spinner-admin-table {
+  position: relative;
+  background-color: #fff;
+}
+.spinner-admin-table table {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.spinner-admin-table:before {
+  content: "";
+  border: 6px solid #dbdbdb;
+  border-top: 6px solid #2271b1;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 22;
+  margin: -20px 0 0 -20px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

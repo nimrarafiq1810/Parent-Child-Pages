@@ -12,8 +12,6 @@ function enqueue_shortcode_tool_scripts() {
        
         // Enqueue Select2 JS
         wp_enqueue_script( 'select2-js', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js', array('jquery'), null, true );
-        
-       
     
         wp_enqueue_script('search-script', get_stylesheet_directory_uri() . '/shortcode_search_influencer/assets/js/shortcode-search-section.js', array('jquery'), null, true);
         wp_enqueue_script('form-control-script', get_stylesheet_directory_uri() . '/shortcode_search_influencer/assets/js/shortcode-form-control.js', array('jquery'), null, true);

@@ -256,66 +256,382 @@ add_action('wp_ajax_new_influencer_cards','new_influencer_cards');
 add_action('wp_ajax_nopriv_new_influencer_cards','new_influencer_cards');
 
 
-
-// Create parent and child pages
-function create_parent_and_child_pages() {
-    // Check if the option flag is set to prevent repeated execution
-    if ( get_option( 'pages_created_flag' ) === "1" ) {
-        return; // Pages already created, no need to continue
+function read_csv_from_url_to_array($url) {
+    // Read the CSV file contents from the URL
+    $file_contents = file_get_contents($url);
+    
+    // Convert CSV file contents to array
+    $lines = explode("\n", $file_contents);
+    $header = str_getcsv(array_shift($lines));
+    $data = [];
+    foreach ($lines as $line) {
+        $data[] = (str_getcsv($line));
     }
     
-    // Create parent page
-    $parent_post = array(
-        'post_title'    => 'Parent Page',
-        'post_content'  => 'This is the content of the parent page.',
-        'post_status'   => 'publish',
-        'post_author'   => 24, // Change this to the desired author ID
-        'post_type'     => 'page',
-    );
-
-    // Insert the parent page into the database
-    $parent_id = wp_insert_post( $parent_post );
-
-    // Check if the parent page is successfully created
-    if ( ! is_wp_error( $parent_id ) ) {
-        // Array of child page titles
-        $child_page_titles = array(
-            'gaming-check' => 'SEO Title for Child Page 1',
-            'lifestyle-check' => 'SEO Title for Child Page 2',
-            'art-check' => 'SEO Title for Child Page 3'
-        );
-        // Loop through each child page title and create child pages
-        foreach ( $child_page_titles as $title => $seo_title ) {
-            // Create child page under the parent page
-            $child_post = array(
-                'post_title'    => $title,
-                'post_content'  => 'This is the content of ' . $title,
-                'post_status'   => 'publish',
-                'post_author'   => 24, // Change this to the desired author ID
-                'post_type'     => 'page',
-                'post_parent'   => $parent_id, // Set the parent page ID
-            );
-
-            // Insert the child page into the database
-            $child_id = wp_insert_post( $child_post );
-            if ( ! is_wp_error( $child_id ) ) {
-                update_post_meta( $child_id, '_yoast_wpseo_title', $seo_title );
-            }
-
-            // Optionally, you can add custom fields/meta data to the child page
-            // add_post_meta( $child_id, 'custom_key', 'custom_value' );
-        }
-
-        // Set the option flag to prevent repeated execution
-        update_option( 'pages_created_flag', "1" );
-        
-        // Unhook this function to prevent further executions
-        remove_action( 'init', 'create_parent_and_child_pages' );
-    } else {
-        // Handle the error if the parent page creation fails
-        echo "Failed to create parent page.";
-    }
+    return $data;
 }
 
-// Hook into the 'init' action to create the parent and child pages
-add_action( 'init', 'create_parent_and_child_pages' );
+
+
+function convertStringToBoolean($string_value) {
+    return $string_value === "TRUE" ? true : false;
+}
+
+// function csv_to_array($file_path) {
+//     $csv_data = [];
+    
+//     // Open the CSV file for reading
+//     if (($handle = fopen($file_path, "r")) !== FALSE) {
+//         fgetcsv($handle);
+//         // Read each line from the CSV file
+//         while (($data = fgetcsv($handle, 20000, ",")) !== FALSE) {
+//             // Add the data from each line to the array
+//             $csv_data[] = $data;
+//         }
+//         fclose($handle);
+//     } else {
+//         // Handle file open error
+//         die("Error opening file: " . $file_path);
+//     }
+    
+//     return $csv_data;
+// }
+
+// // Get the directory of the current script
+// $current_directory = __DIR__;
+
+// // Define the relative path to your CSV file
+// $csv_file_name = "9.csv";
+
+// // Combine the directory and file name to get the full path
+// $csv_file_path = $current_directory . DIRECTORY_SEPARATOR . $csv_file_name;
+
+
+// Create child pages under a specified parent page
+function create_child_pages_and_assign_template($parent_page_id, $benchmark, $template_name, $check_data = null) {
+    if ($check_data === null && isset($GLOBALS['csv_array'])) {
+        $check_data = $GLOBALS['csv_array'];
+    }
+    // Array of child page data including template and ACF fields
+    $page_flag= 'pages_created_flag_'.str_replace(' ', '', $benchmark);
+    
+    if ( get_option( $page_flag ) === "1" ){
+       
+        return "Pages are already created";
+    }
+    else {
+   
+        // Loop through each child page data and create child pages
+        foreach ($check_data as $child_data) 
+        {
+            $resultArray = array();
+            // Create child page under the specified parent page
+            $child_post = array(
+                'post_title' => $child_data[0],
+                'post_content' => 'This is the content for '. $child_data[0]. ' child page',
+                'post_status' => 'publish',
+                'post_author' => 24, // Change this to the desired author ID
+                'post_type' => 'page',
+                'post_parent' => $parent_page_id // Set the parent page ID
+            );
+            // Insert the child page into the database
+            $child_id = wp_insert_post($child_post);
+
+            // Set the template for the child page
+            if (!is_wp_error($child_id)) 
+            {
+                update_post_meta($child_id, '_wp_page_template', $template_name);
+                add_post_meta($child_id, 'benchmark_identifier', $benchmark, true);
+                update_post_meta($child_id, '_yoast_wpseo_title', 'List of Top 1000 '.$child_data[1].' Influencers [January 2023]');
+                update_post_meta($child_id, '_yoast_wpseo_metadesc', 'Find the best 1000 '.$child_data[2].' to follow in 2023. Sourced from our +60M Instagram, TikTok, and Youtube influencer database.');
+            }
+            // Set ACF fields for the child page
+            if (!is_wp_error($child_id)) 
+            {
+                $template = get_post_meta($child_id, '_wp_page_template', true);
+                if ($template === $template_name)
+                {
+                    $numIterations = ceil((count($child_data) - 12) / 14); // Calculate the number of iterations needed
+                    for ($iteration = 0; $iteration < $numIterations; $iteration++) 
+                    {
+                        $startIndex = $iteration * 14 + 12; // Calculate the start index for this iteration
+                        // Extract 14 elements starting from the calculated index
+                        if(convertStringToBoolean($child_data[$startIndex + 6]) == true) {
+                            $verify = true;
+                        }
+                        else {
+                            $verify = false;
+                            }
+                            $subArray = array(
+                                 "username" => $child_data[$startIndex],
+                                 "instagram_url" => $child_data[$startIndex + 1],             
+                                 "profile_picture" => $child_data[$startIndex + 2],
+                                 "media_count" => $child_data[$startIndex + 3],
+                                 "niche_sub_class" => $child_data[$startIndex + 4],
+                                 "full_name" => $child_data[$startIndex + 5],
+                                 "is_verified" => $verify,
+                                 "follower_count" => $child_data[$startIndex + 7],
+                                 "country" => $child_data[$startIndex + 8],
+                                 "category" => $child_data[$startIndex + 9],
+                                 "hashtags" => $child_data[$startIndex + 10],
+                                 "engagement_percent" => $child_data[$startIndex + 11],
+                                 "youtube_link" => $child_data[$startIndex + 12],
+                                 "tiktok" => $child_data[$startIndex + 13]
+                                );
+                            $row_key = add_row('cards', ($subArray), $child_id);
+                    }
+                }
+                
+            }
+
+            
+        }
+        update_option( $page_flag , "1" );
+       return "Child pages are created successfully";
+    }
+    // Set the option flag to prevent repeated execution
+    
+}
+
+// function get_parent_page_id() 
+// {
+//     // Get the parent page by its title
+//     $parent_page = get_page_by_title("Top Tiktokers");
+//     // Check if the parent page exists
+//     if ($parent_page)
+//     {
+//         // Return the parent page ID
+//         $parent_page_id = $parent_page->ID;
+//         create_child_pages_and_assign_template($parent_page_id);
+//     }
+//     else
+//     {
+//         // Return false if the parent page is not found
+//         echo "Parent page not found.";
+//     }
+// }
+
+// add_action( 'init', 'get_parent_page_id' );
+
+function add_seo_pages_callback() {
+    $batch_name = isset($_POST['batch_name']) ? sanitize_text_field($_POST['batch_name']) : '';
+    $parent_page = isset($_POST['parent_page']) ? intval($_POST['parent_page']) : 0;
+    $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
+    $file_url = ($_POST['file_url']);
+
+    if ($parent_page)
+    {
+        global $csv_array;
+        $csv_array = read_csv_from_url_to_array($file_url);
+        // Return the parent page ID
+        $parent_page_id = $parent_page->ID;
+        $message = create_child_pages_and_assign_template($parent_page, $batch_name, $template_name);
+   
+    }
+    else
+    {
+        // Return false if the parent page is not found
+        $message = "There is some error in it";
+    }
+    wp_send_json($message);
+}
+add_action('wp_ajax_add_seo_pages_callback', 'add_seo_pages_callback');
+
+
+add_action('admin_menu', 'my_settings_page');
+function my_settings_page() {
+    add_options_page('My Settings', 'Batch Settings', 'manage_options', 'my-settings', 'my_settings_page_callback');
+}
+
+// Callback function to display the settings page content
+function my_settings_page_callback() {
+    ?>
+    <div class="wrap">
+        <h2>Batch Settings</h2>
+        <form method="post" action="options.php">
+            <?php settings_fields('my_settings_group'); ?>
+            <?php do_settings_sections('my-settings'); ?>
+            <?php submit_button(); ?>
+        </form>
+     
+    
+    </div>
+    <?php
+}
+// Register and define the settings
+add_action('admin_init', 'my_settings_init');
+function my_settings_init() {
+    register_setting('my_settings_group', 'settings_parent_page', 'sanitize_callback');
+    register_setting('my_settings_group', 'settings_template_name', 'sanitize_callback');
+    register_setting('my_settings_group', 'settings_batch_name', 'sanitize_callback');
+
+    add_settings_section('my_settings_section', 'Settings Section', 'section_callback', 'my-settings');
+
+    add_settings_field('my_setting_field', 'Setting Name', 'setting_callback', 'my-settings', 'my_settings_section');
+}
+
+// Callback function for sanitizing input
+function sanitize_callback($input) {
+    // Sanitize input here if necessary
+    return $input;
+}
+
+// Callback function to display section description
+function section_callback() {
+    echo '<p>Section description here.</p>';
+}
+
+// Callback function to display setting input field
+function setting_callback() {
+
+    // Start the table
+echo '<div id ="table-div">';
+echo '<table id="settings-table">';
+echo '<tr>';
+echo '<td>Batch Name</td>';
+echo '<td>Template Name</td>';
+echo '<td>Parent Page</td>';
+echo '<td>Data Source</td>';
+echo '<td>Publish Batch</td>';
+echo '<td>Delete Batch</td>';
+echo '<td>Update Batch</td>';
+echo '</tr>';
+// Row for the inputs and buttons
+if (have_rows('programmatic_seo_batch', 'option')) {
+    // Loop through the repeater rows
+    while (have_rows('programmatic_seo_batch', 'option')) {
+        // Do something with each repeater row
+        the_row();
+
+        // Example: Get subfields within the repeater
+        $batch_name = get_sub_field('batch_name');
+        $parent_page_name_field = get_sub_field('parent_page');
+        $template_name_field = get_sub_field('template_name');
+        $upload_csv_field = get_sub_field('upload_csv');
+
+        // Output the repeater field values
+        echo '<tr data-batch-name="' . esc_attr($batch_name) . '" data-parent-page="' . esc_attr($parent_page_name_field) . '" data-template-name="' . esc_attr($template_name_field) . '" data-upload-csv-file="' . esc_attr($upload_csv_field).'">';
+        echo '<td>'.$batch_name.'</td>';
+        echo '<td>'.$parent_page_name_field.'</td>';
+        echo '<td>'.$template_name_field.'</td>';
+        echo '<td>'.$upload_csv_field.'</td>';
+        echo '<td><button class="add-pages-button">Add SEO Pages</button></td>';
+        echo '<td><button class="delete-pages-button">Delete</button></td>';
+        echo '<td><button class="update-pages-button">Update</button></td>';
+        echo '</tr>';
+    }
+} else {
+    // No repeater rows found
+    echo 'No cards found.';
+}
+
+
+// End the table
+echo '</table>';
+echo '</div>';
+
+}
+
+
+
+// Enqueue custom JavaScript and css file in the admin area
+function enqueue_admin_scripts($hook) {
+    if ($hook === 'settings_page_my-settings') {
+        wp_enqueue_script('custom-admin-scripts', get_stylesheet_directory_uri() . '/wp-settings.js', array('jquery'), '1.0', true);
+        wp_enqueue_style('custom-admin-styles', get_stylesheet_directory_uri() . '/setting-page.css');
+        wp_localize_script('custom-admin-scripts', 'localized_data_admin', array('ajax_url' => admin_url( 'admin-ajax.php' )));
+    }
+}
+add_action('admin_enqueue_scripts', 'enqueue_admin_scripts');
+
+
+
+
+
+function delete_seo_pages_callback() {
+    $batch_name = isset($_POST['batch_name']) ? sanitize_text_field($_POST['batch_name']) : '';
+    $parent_page = isset($_POST['parent_page']) ? intval($_POST['parent_page']) : 0;
+    $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
+    $file_url = ($_POST['file_url']);
+    $page_flag= 'pages_created_flag_'.str_replace(' ', '', $batch_name);
+
+    $args = array(
+        'post_type'      => 'page',
+        'posts_per_page' => -1, // Get all pages
+        'meta_query'     => array(
+            array(
+                'key'   => 'benchmark_identifier',
+                'value' => $batch_name, // Replace with your meta value
+            ),
+        ),
+    );
+    $query = new WP_Query($args);
+    // Check if there are any pages found
+    if ($query->have_posts()) {
+        while ($query->have_posts()) {
+            $query->the_post();
+            // Get the post ID
+            $post_id = get_the_ID();
+            // Delete the page
+            wp_delete_post($post_id, true); // Set the second parameter to true to force delete
+        }
+        // Restore original post data
+        wp_reset_postdata();
+        update_option( $page_flag , "0" );
+        // Optionally, you can return a message or perform any other action after deletion
+        $message = 'Pages deleted successfully.';
+
+    } else {
+        $message = 'No pages found to delete.';
+    }
+    wp_send_json($message);
+}
+add_action('wp_ajax_delete_seo_pages_callback', 'delete_seo_pages_callback');
+
+
+function update_seo_pages_callback() {
+    $batch_name = isset($_POST['batch_name']) ? sanitize_text_field($_POST['batch_name']) : '';
+    $parent_page = isset($_POST['parent_page']) ? intval($_POST['parent_page']) : 0;
+    $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
+    $file_url = ($_POST['file_url']);
+    $page_flag= 'pages_created_flag_'.str_replace(' ', '', $batch_name);
+
+    $args = array(
+        'post_type'      => 'page',
+        'posts_per_page' => -1, // Get all pages
+        'meta_query'     => array(
+            array(
+                'key'   => 'benchmark_identifier',
+                'value' => $batch_name, // Replace with your meta value
+            ),
+        ),
+    );
+    $query = new WP_Query($args);
+    if ($query->have_posts()) {
+        while ($query->have_posts()) {
+            $query->the_post();
+            // Get the post ID
+            $post_id = get_the_ID();
+            // Delete the page
+            wp_delete_post($post_id, true); // Set the second parameter to true to force delete
+        }
+        // Restore original post data
+        wp_reset_postdata();
+        update_option( $page_flag , "0" );
+        global $csv_array;
+        $csv_array = read_csv_from_url_to_array($file_url);
+        create_child_pages_and_assign_template($parent_page, $batch_name, $template_name);
+        $message = 'Batch is updated Successfully';
+    }
+    else {
+        $message = 'Pages are not exist to update';
+    }
+    wp_send_json($message);
+
+
+}
+add_action('wp_ajax_update_seo_pages_callback', 'update_seo_pages_callback');
+
+
+
+
